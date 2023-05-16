@@ -26,7 +26,8 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS " + ItemEntry.TABLE_NAME)
-        onCreate(db)
+        // if the schema changes, replace the whole database
+        // db?.execSQL("DROP TABLE IF EXISTS " + ItemEntry.TABLE_NAME)
+        // onCreate(db)
     }
 }
