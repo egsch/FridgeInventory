@@ -14,5 +14,4 @@ object DBContract {
         const val DESCRIPTION_COL = "description"
         const val DATE_COL = "date"
     }
-
 }

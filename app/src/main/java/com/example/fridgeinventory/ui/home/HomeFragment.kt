@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.fridgeinventory.InventoryAdapter
+import com.example.fridgeinventory.R
 import com.example.fridgeinventory.databinding.FragmentHomeBinding
+import com.example.fridgeinventory.ui.DBOperations
 
 class HomeFragment : Fragment() {
 
@@ -28,10 +32,16 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        // val textView: TextView = binding.textHome
+        val dbOperations = DBOperations()
+        val dataset = dbOperations.readData(context);
+
+        val inventoryAdapter = InventoryAdapter(dataset)
+
+        val recyclerView: RecyclerView = binding.inventoryRv
+        recyclerView.adapter = inventoryAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
         return root
     }
 

@@ -2,11 +2,14 @@ package com.example.fridgeinventory.ui
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
+import android.database.DatabaseUtils
+import android.database.sqlite.SQLiteDatabase
 import com.example.fridgeinventory.DBContract
 import com.example.fridgeinventory.DBHelper
 
 class DBOperations {
-    fun addItem(context: Context, id : Int, name: String, barcode : String, expiration : String,
+    public fun addItem(context: Context, id : Int, name: String, barcode : String, expiration : String,
                 location : String, lifetime : String, description : String, date : String) {
         // Gets the data repository in write mode
         val dbHelper = DBHelper(context)
@@ -26,5 +29,26 @@ class DBOperations {
 
         // Insert the new row, returning the primary key value of the new row
         val newRowId = db?.insert(DBContract.ItemEntry.TABLE_NAME, null, values)
+    }
+
+    public fun readData(context: Context?) : ArrayList<String> {
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.readableDatabase
+
+        val cursor: Cursor = db.rawQuery("SELECT * FROM "+ DBContract.ItemEntry.TABLE_NAME, null)
+        // create array list (will need to make some sort of item model)
+        var dataset : ArrayList<String> = ArrayList();
+        if (cursor.moveToFirst()) {
+            do {
+                dataset.add((cursor.getString(2)))
+            } while (cursor.moveToNext())
+        }
+        return dataset;
+    }
+
+    fun getNumEntries(context: Context?) : Int {
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.readableDatabase
+        return DatabaseUtils.queryNumEntries(db, DBContract.ItemEntry.TABLE_NAME).toInt()
     }
 }
