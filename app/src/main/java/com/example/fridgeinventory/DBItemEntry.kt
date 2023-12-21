@@ -8,5 +8,6 @@ data class DBItemEntry (
     var lifetime: String,
     var name: String,
     var description: String,
-    var date: String
+    var date: String,
+    var deleted: Boolean = false
 )

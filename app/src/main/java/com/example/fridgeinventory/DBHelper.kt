@@ -14,7 +14,7 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     override fun onCreate(db: SQLiteDatabase?) {
         val query =
             ("CREATE TABLE " + ItemEntry.TABLE_NAME + " ("
-                    + ItemEntry.ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + ItemEntry.ID_COL + " INTEGER PRIMARY KEY, "
                     + ItemEntry.NAME_COL + " TEXT, "
                     + ItemEntry.BARCODE_COL + " TEXT, "
                     + ItemEntry.EXPIRATION_COL + " TEXT, "
@@ -23,8 +23,11 @@ class DBHelper(context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME, nul
                     + ItemEntry.DESCRIPTION_COL + " TEXT, "
                     + ItemEntry.DATE_COL + " TEXT"
                     + ")")
+        var query2 = "CREATE VIRTUAL TABLE t3 USING fts4(content=\"" + DBContract.ItemEntry.TABLE_NAME+ "\", " + DBContract.ItemEntry.NAME_COL + ", " + DBContract.ItemEntry.BARCODE_COL + ");"
+
 
         db?.execSQL(query)
+        db?.execSQL(query2)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
