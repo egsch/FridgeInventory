@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="5dp"
     tools:context=".ui.add.AddFragment">
 
     <TextView
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:text="Enter an Item"
         />
 
@@ -19,6 +20,7 @@
         android:id="@+id/itemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/formHeader"
         android:hint="Enter Item Name"
         />
@@ -27,17 +29,18 @@
         android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/itemName"
         android:hint="Enter Item Description (optional)"
         />
 
-    <EditText
+    <Spinner
         android:id="@+id/itemLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/itemDescription"
-        android:hint="Enter Item Location"
-        />
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        app:layout_constraintTop_toBottomOf="@id/itemDescription"/>
+
 
     <EditText
         android:id="@+id/itemExpiration"
@@ -49,10 +52,19 @@
         />
 
     <EditText
+        android:id="@+id/itemLifetime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        app:layout_constraintTop_toBottomOf="@id/itemExpiration"
+        android:hint="Lifetime Past Expiration (days, optional)"
+        />
+
+    <EditText
         android:id="@+id/itemBarcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/itemExpiration"
+        app:layout_constraintTop_toBottomOf="@id/itemLifetime"
         android:inputType="number"
         android:hint="Enter Item Barcode (optional)"
         />
@@ -63,5 +75,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/itemBarcode"
         android:text="Create Entry"
+        />
+
+    <Button
+        android:id="@+id/cameraButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/submitButton"
+        android:text="Camera"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

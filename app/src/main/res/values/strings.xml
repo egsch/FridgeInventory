@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Fridge Inventory</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard">Add</string>
+    <string name="title_notifications">Locations</string>
     <string name="title_activity_form">FormActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -12,6 +12,10 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings used for sorting and filtering spinners -->
+    <string name="default_loc_filter_label">Any Location</string>
+    <string name="date_sort_option">Date (ascending)</string>
+    <string name="alpha_sort_option">Name</string>
+    <string name="expiration_sort_option">Expiration Date</string>
 </resources>

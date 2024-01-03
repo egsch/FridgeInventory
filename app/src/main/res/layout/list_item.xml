@@ -28,6 +28,11 @@
             android:layout_height="wrap_content"
             android:text="placeholder"
             />
+        <TextView
+            android:id="@+id/inventory_item_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
         <Button
             android:id="@+id/remove_item_button"
             android:layout_width="match_parent"

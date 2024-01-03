@@ -2,17 +2,18 @@ package com.example.fridgeinventory.ui.home
 
 import android.app.Activity
 import android.content.Intent
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.SearchView.OnCloseListener
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.R
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,8 +28,7 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    var searchString : String = ""
-    var intentLauncher : ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private var intentLauncher : ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val searchBar = binding.searchBar
             searchBar.setQuery(result.data?.getStringExtra("barcode"), true)
@@ -37,23 +37,31 @@ class HomeFragment : Fragment() {
         }
     }
 
+    inner class SpinnerActivity : Activity(), AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            val searchBar = binding.searchBar
+            val query = searchBar.query
+            onQueryTextSubmit(query.toString())
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            // do nothing
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // val textView: TextView = binding.textHome
         val dbOperations = DBOperations()
-        val dataset = dbOperations.readData(context);
+        val dataset = dbOperations.readData(context, "", DBContract.ItemEntry.EXPIRATION_COL)
 
+        // set up recycler view for inventory contents
         val inventoryAdapter = InventoryAdapter(dataset)
-
         val recyclerView: RecyclerView = binding.inventoryRv
         recyclerView.adapter = inventoryAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -61,47 +69,96 @@ class HomeFragment : Fragment() {
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
         )
 
+        // add link to camera
         val cameraButton = binding.cameraButton
         cameraButton.setOnClickListener {
             val cameraIntent = Intent(context, CameraActivity::class.java)
             intentLauncher.launch(cameraIntent)
         }
 
+        val dbHelper = DBHelper(context)
+        val db : SQLiteDatabase = dbHelper.readableDatabase
+        val spinner: Spinner = root.findViewById(R.id.filter_location_spinner)
+        val sortSpinner : Spinner = root.findViewById(R.id.sort_spinner)
+
+        // set up location spinner
+        val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} as _id,${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME};", null)
+        val locationOptions = ArrayList<String>()
+        context?.getString(R.string.default_loc_filter_label)?.let { locationOptions.add(it) }
+        if (cursor.moveToFirst()) {
+            do {
+                locationOptions.add(cursor.getString(1))
+            } while (cursor.moveToNext())
+        }
+        val arrayAdapter = ArrayAdapter(
+            context!!,
+            android.R.layout.simple_spinner_dropdown_item,
+            locationOptions
+        )
+        spinner.adapter = arrayAdapter
+        spinner.onItemSelectedListener = SpinnerActivity()
+
+        // set up sort spinner
+        val sortOptions = ArrayList<String>()
+        val dateOption = context?.getString(R.string.date_sort_option)
+        val nameOption = context?.getString(R.string.alpha_sort_option)
+        val expirationOption = context?.getString(R.string.expiration_sort_option)
+        sortOptions.add(expirationOption.toString())
+        sortOptions.add(nameOption.toString())
+        sortOptions.add(dateOption.toString())
+        val sortArrayAdapter = ArrayAdapter(
+            context!!,
+            android.R.layout.simple_spinner_dropdown_item,
+            sortOptions
+        )
+        sortSpinner.adapter = sortArrayAdapter
+        sortSpinner.onItemSelectedListener = SpinnerActivity()
+
+        // set up search bar action
         val searchBar = binding.searchBar
         searchBar.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                var dataset : ArrayList<DBItemEntry>
-                if (query.isNullOrEmpty()) {
-                    dataset = dbOperations.readData(context)
-                    val recyclerView: RecyclerView = binding.inventoryRv
-                    val inventoryAdapter = InventoryAdapter(dataset)
-                    recyclerView.adapter = inventoryAdapter
-                    return true
-                } else {
-                    dataset = dbOperations.searchData(context, query)
-                    val recyclerView: RecyclerView = binding.inventoryRv
-                    val inventoryAdapter = InventoryAdapter(dataset)
-                    recyclerView.adapter = inventoryAdapter
-                    return true
-                };
-            }
+            override fun onQueryTextSubmit(query: String?): Boolean = onQueryTextSubmit(query)
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
         })
-
-        searchBar.setOnCloseListener(object : OnCloseListener{
-            override fun onClose(): Boolean {
-                var dataset = dbOperations.readData(context)
-                val recyclerView: RecyclerView = binding.inventoryRv
-                val inventoryAdapter = InventoryAdapter(dataset)
-                recyclerView.adapter = inventoryAdapter
-                return true
-            }
-        })
+        searchBar.setOnCloseListener { onQueryTextSubmit("") }
 
         return root
+    }
+
+    fun onQueryTextSubmit(query: String?): Boolean {
+        val dataset : ArrayList<DBItemEntry>
+        val dbOperations = DBOperations()
+        // get filter
+        var filter: String = binding.filterLocationSpinner.selectedItem as String
+        if (filter == context?.getString(R.string.default_loc_filter_label).toString()) {
+            filter = ""
+        }
+        // get sort
+        var sort: String = binding.sortSpinner.selectedItem as String
+        if (sort == context?.getString(R.string.date_sort_option).toString()) {
+            sort = DBContract.ItemEntry.DATE_COL
+        } else if (sort == context?.getString(R.string.expiration_sort_option).toString()) {
+            sort = DBContract.ItemEntry.EXPIRATION_COL
+        } else if (sort == context?.getString(R.string.alpha_sort_option).toString()) {
+            sort = DBContract.ItemEntry.NAME_COL
+        }
+
+        if (query.isNullOrEmpty()) {
+            dataset = dbOperations.readData(context, filter, sort)
+            val recyclerView: RecyclerView = binding.inventoryRv
+            val inventoryAdapter = InventoryAdapter(dataset)
+            recyclerView.adapter = inventoryAdapter
+            return true
+        } else {
+            dataset = dbOperations.searchData(context, query, filter, sort)
+            val recyclerView: RecyclerView = binding.inventoryRv
+            val inventoryAdapter = InventoryAdapter(dataset)
+            recyclerView.adapter = inventoryAdapter
+            return true
+        }
     }
 
     override fun onDestroyView() {

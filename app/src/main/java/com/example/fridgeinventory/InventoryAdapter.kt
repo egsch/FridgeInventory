@@ -1,6 +1,5 @@
 package com.example.fridgeinventory
 
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.example.fridgeinventory.ui.DBOperations
 class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
     RecyclerView.Adapter<InventoryAdapter.ViewHolder>()  {
 
-    private val mCursor: Cursor? = null
     private var expandedPosition = -1
 
     class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
@@ -21,6 +19,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
         val mainView : View = view
         val otherView : View
         val dateTextView : TextView
+        val locationTextView : TextView
         val removeButton : Button
         init {
             // Define click listener for the ViewHolder's View
@@ -28,6 +27,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
             barcodeTextView = view.findViewById(R.id.inventory_item_barcode)
             otherView = view.findViewById(R.id.extra_view)
             dateTextView = view.findViewById(R.id.inventory_item_date)
+            locationTextView = view.findViewById(R.id.inventory_item_location)
             removeButton = view.findViewById(R.id.remove_item_button)
         }
 
@@ -41,7 +41,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
     }
 
     override fun getItemCount(): Int {
-        return dataSet.size;
+        return dataSet.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -49,10 +49,12 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
             holder.mainView.visibility = View.GONE
             return
         }
-        var isOpened = (expandedPosition == position)
+        val isOpened = (expandedPosition == position)
         holder.textView.text = dataSet[position].name
         holder.barcodeTextView.text = dataSet[position].barcode
+
         holder.dateTextView.text = "Expires " + dataSet[position].expiration
+        holder.locationTextView.text = dataSet[position].location
         holder.otherView.visibility = if (isOpened) View.VISIBLE else View.GONE
 
         holder.mainView.setOnClickListener {
@@ -61,10 +63,12 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
             notifyItemChanged(position)
         }
         holder.removeButton.setOnClickListener {
-            var dbOp = DBOperations()
+            val dbOp = DBOperations()
             dbOp.removeItem(holder.itemView.context, dataSet[position].id)
             dataSet.removeAt(position) // todo: not efficient?
-            notifyItemRemoved(position)
+            // todo: kinda buggy
+            notifyDataSetChanged()
+            // notifyItemRemoved(position)
         }
     }
 }

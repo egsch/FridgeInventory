@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase
 import com.example.fridgeinventory.DBContract
 import com.example.fridgeinventory.DBHelper
 import com.example.fridgeinventory.DBItemEntry
+import java.sql.ResultSet
 
 class DBOperations {
     public fun addItem(context: Context, name: String, barcode : String, expiration : String,
@@ -40,12 +41,17 @@ class DBOperations {
         db.execSQL("DELETE FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id")
     }
 
-    public fun readData(context: Context?) : ArrayList<DBItemEntry> {
+    public fun readData(context: Context?, filter: String, sort: String) : ArrayList<DBItemEntry> {
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
 
-        val cursor: Cursor = db.rawQuery("SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME}"
-                + " ORDER BY ${DBContract.ItemEntry.DATE_COL}", null)
+        val queryString : String = if (filter == "") {
+            "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME}" + " ORDER BY $sort"
+        } else {
+            "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME}" + " WHERE ${DBContract.ItemEntry.LOCATION_COL} = '$filter'"+ " ORDER BY $sort"
+        }
+
+        val cursor: Cursor = db.rawQuery(queryString, null)
         // create array list (will need to make some sort of item model)
         var dataset : ArrayList<DBItemEntry> = ArrayList();
         if (cursor.moveToFirst()) {
@@ -67,15 +73,50 @@ class DBOperations {
         return dataset;
     }
 
-    public fun searchData(context: Context?, searchTerm: String) : ArrayList<DBItemEntry> {
+    /**
+     * Returns list of locations
+     */
+    fun getLocations(context: Context?) : ArrayList<String> {
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.readableDatabase
+        val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME};", null)
+        var locations = ArrayList<String>()
+        if (cursor.moveToFirst()) {
+            do {
+                locations.add(cursor.getString(0))
+            } while (cursor.moveToNext())
+        }
+        return locations
+    }
+
+    /**
+     * Returns true if successfully added, false otherwise
+     */
+    fun addLocation(context : Context?, locationString: String) : Boolean {
+        // TODO: probably bad (contentvalues stuff?)
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.readableDatabase
+        val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME} WHERE ${DBContract.LocationEntry.NAME_COL} = '" + locationString + "';", null)
+        if (!cursor.moveToFirst()) {
+            val newRowId = db?.insert(DBContract.LocationEntry.TABLE_NAME, null, ContentValues(1).apply { put(DBContract.LocationEntry.NAME_COL, locationString) })
+            return true
+        }
+        return false
+    }
+
+    public fun searchData(context: Context?, searchTerm: String, location: String, sort: String) : ArrayList<DBItemEntry> {
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
 
         var dataset : ArrayList<DBItemEntry> = ArrayList();
-        // todo: match with reading above once you fix
         db.execSQL("INSERT INTO t3(docid, "+DBContract.ItemEntry.NAME_COL+", "+DBContract.ItemEntry.BARCODE_COL+") SELECT id, " +DBContract.ItemEntry.NAME_COL+ ", "+DBContract.ItemEntry.BARCODE_COL+" FROM "+DBContract.ItemEntry.TABLE_NAME+";" )
+        val queryString : String = if (location == "") {
+            "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id IN (SELECT docid FROM t3 WHERE t3 MATCH '\"$searchTerm\"') ORDER BY $sort;"
+        } else {
+            "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE ${DBContract.ItemEntry.LOCATION_COL} = \"$location\" AND id IN (SELECT docid FROM t3 WHERE t3 MATCH '\"$searchTerm\"') ORDER BY $sort;"
+        }
         val cursor: Cursor = db.rawQuery(
-            "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id IN (SELECT docid FROM t3 WHERE t3 MATCH '\"$searchTerm\"') ORDER BY ${DBContract.ItemEntry.DATE_COL};", null)
+            queryString, null)
         if (cursor.moveToFirst()) {
             do {
                 var itemEntry = DBItemEntry(

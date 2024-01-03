@@ -10,11 +10,14 @@
     <SearchView
         android:id="@+id/search_bar"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/camera_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:queryHint="Enter Search Term"
+        android:layout_margin="5dp"
         app:iconifiedByDefault="false"
+
         />
 
     <Button
@@ -23,10 +26,34 @@
         android:id="@+id/camera_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:text="Camera" />
 
+    <HorizontalScrollView
+        android:id="@+id/filterView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/search_bar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        <Spinner
+            android:id="@+id/filter_location_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        <Spinner
+            android:id="@+id/sort_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <androidx.recyclerview.widget.RecyclerView
-        app:layout_constraintTop_toBottomOf="@id/search_bar"
+        app:layout_constraintTop_toBottomOf="@id/filterView"
         app:layout_constraintBottom_toBottomOf="parent"
         android:id="@+id/inventory_rv"
         android:layout_width="match_parent"

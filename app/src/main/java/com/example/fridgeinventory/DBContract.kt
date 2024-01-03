@@ -14,4 +14,9 @@ object DBContract {
         const val DESCRIPTION_COL = "description"
         const val DATE_COL = "date"
     }
+
+    object LocationEntry : BaseColumns {
+        const val TABLE_NAME = "locations"
+        const val NAME_COL = "name"
+    }
 }
