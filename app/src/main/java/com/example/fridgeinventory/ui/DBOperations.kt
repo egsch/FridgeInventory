@@ -93,7 +93,6 @@ class DBOperations {
      * Returns true if successfully added, false otherwise
      */
     fun addLocation(context : Context?, locationString: String) : Boolean {
-        // TODO: probably bad (contentvalues stuff?)
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
         val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME} WHERE ${DBContract.LocationEntry.NAME_COL} = '" + locationString + "';", null)

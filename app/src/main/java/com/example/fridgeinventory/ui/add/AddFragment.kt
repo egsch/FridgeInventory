@@ -1,6 +1,5 @@
 package com.example.fridgeinventory.ui.add
 
-import android.Manifest.permission.*
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -15,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import com.example.fridgeinventory.*
-import com.example.fridgeinventory.databinding.ActivityFormBinding
 import com.example.fridgeinventory.databinding.FragmentDashboardBinding
 import com.example.fridgeinventory.ui.DBOperations
 import kotlinx.serialization.MissingFieldException
@@ -23,9 +21,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
-import okhttp3.internal.format
 import java.io.IOException
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -36,36 +32,36 @@ class AddFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var baseContext: Context
     private val httpClient = OkHttpClient()
-    private val nameText = ""
+
     @Serializable class ItemResponse (val product : FoodItem)
     @Serializable class FoodItem (val product_name_en: String = "")
     fun useResponseString(responseString :  String) {
-        var nameItem = view?.findViewById<EditText>(R.id.itemName)
-        nameItem?.post(Runnable {
+        val nameItem = view?.findViewById<EditText>(R.id.itemName)
+        nameItem?.post {
             nameItem.setText(responseString)
-        })
+        }
     }
-    fun get(url: String ) {
+    fun get(url: String) {
         val request = Request.Builder()
             .url(url)
             .build()
         var responseString : String
         httpClient.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                var responseStr = response.body?.string()
+                val responseStr = response.body?.string()
                 responseStr?.let {
                     try {
-                        var responseJSON = Json {ignoreUnknownKeys = true}.decodeFromString<ItemResponse>(it)
+                        val responseJSON = Json {ignoreUnknownKeys = true}.decodeFromString<ItemResponse>(it)
                         responseString = responseJSON.product.product_name_en
                         useResponseString(responseString)
                     } catch (exception : MissingFieldException) {
+                        Log.d("No food found", "food does not exist or has no English name")
                     }
                 }
 
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                // do something
             }
         })
     }
@@ -81,14 +77,14 @@ class AddFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        var buttonSubmit = root.findViewById<Button>(R.id.submitButton)
+        val buttonSubmit = root.findViewById<Button>(R.id.submitButton)
         buttonSubmit?.setOnClickListener{
             processSubmit()
         }
 
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
-        var results : ArrayList<String> = ArrayList<String>()
+        // var results : ArrayList<String> = ArrayList<String>()
         val spinner: Spinner = root.findViewById(R.id.itemLocation)
         val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} as _id,${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME};", null)
         val columnArray = arrayOf(DBContract.LocationEntry.NAME_COL)
@@ -103,16 +99,16 @@ class AddFragment : Fragment() {
         val intentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
-                    var result = result.data?.getStringExtra("barcode")
-                    var barcodeItem = view?.findViewById<EditText>(R.id.itemBarcode)
-                    barcodeItem?.setText(result.toString())
+                    val resultBarcode = result.data?.getStringExtra("barcode")
+                    val barcodeItem = view?.findViewById<EditText>(R.id.itemBarcode)
+                    barcodeItem?.setText(resultBarcode.toString())
                     // get data from OpenFoodFacts API
                     // get https://world.openfoodfacts.org/api/v2/product/<barcode>.json
-                    var jsonResponse = get("https://world.openfoodfacts.org/api/v2/product/" + result + ".json")
+                    get("https://world.openfoodfacts.org/api/v2/product/$result.json")
                 }
             }
 
-        var buttonCamera = root.findViewById<Button>(R.id.cameraButton)
+        val buttonCamera = root.findViewById<Button>(R.id.cameraButton)
         buttonCamera?.setOnClickListener{
 
             Log.d("here", "here")
@@ -129,14 +125,15 @@ class AddFragment : Fragment() {
     }
 
     private fun processSubmit(){
-        var name = view?.findViewById<EditText>(R.id.itemName)
-        var description = view?.findViewById<EditText>(R.id.itemDescription)
-        var location = view?.findViewById<Spinner>(R.id.itemLocation)
-        var expirationDate = view?.findViewById<EditText>(R.id.itemExpiration)
-        var expirationDateFormatted : String
+        val name = view?.findViewById<EditText>(R.id.itemName)
+        val description = view?.findViewById<EditText>(R.id.itemDescription)
+        val location = view?.findViewById<Spinner>(R.id.itemLocation)
+        val expirationDate = view?.findViewById<EditText>(R.id.itemExpiration)
+        val expirationDateFormatted : String
         try {
-            // TODO: Replace toString with other date format. Use time zones?
-            val formatter = DateTimeFormatter.ofPattern("MM/DD/YYYY")
+            // TODO: fix date sql sortable
+            // TODO: Read more about week-era-year (yyyy vs YYYY)
+            val formatter = DateTimeFormatter.ofPattern("MM/DD/yyyy")
             val expirationDateParsed = formatter
                 .withZone(TimeZone.getDefault().toZoneId())
                 .parse(expirationDate?.text.toString())
@@ -145,12 +142,12 @@ class AddFragment : Fragment() {
             highlightFieldRed(expirationDate)
             return
         }
-        var barcode = view?.findViewById<EditText>(R.id.itemBarcode)
-        var currentDate = LocalDateTime.now()
-        var lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
-        var selectedItem = location?.selectedItem as Cursor
+        val barcode = view?.findViewById<EditText>(R.id.itemBarcode)
+        val currentDate = LocalDateTime.now()
+        val lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
+        val selectedItem = location?.selectedItem as Cursor
 
-        var dbOp = DBOperations()
+        val dbOp = DBOperations()
         dbOp.addItem(baseContext, name?.text.toString(), barcode?.text.toString(),
             expirationDateFormatted, selectedItem.getString(1).toString(), lifetime.toString(),
             description?.text.toString(), currentDate.toString())
