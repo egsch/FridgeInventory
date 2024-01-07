@@ -1,8 +1,15 @@
 package com.example.fridgeinventory.ui.add
 
 import android.app.Activity
+import android.Manifest
+import android.app.AlarmManager
+import android.app.AlarmManager.OnAlarmListener
+import android.app.AlarmManager.RTC
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +18,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.fridgeinventory.*
 import com.example.fridgeinventory.databinding.FragmentDashboardBinding
@@ -22,7 +32,11 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import java.io.IOException
+import java.lang.System.currentTimeMillis
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.TimeZone
@@ -129,32 +143,80 @@ class AddFragment : Fragment() {
         val description = view?.findViewById<EditText>(R.id.itemDescription)
         val location = view?.findViewById<Spinner>(R.id.itemLocation)
         val expirationDate = view?.findViewById<EditText>(R.id.itemExpiration)
+        var dateMilliseconds : Long
         val expirationDateFormatted : String
-        try {
-            // TODO: fix date sql sortable
-            // TODO: Read more about week-era-year (yyyy vs YYYY)
-            val formatter = DateTimeFormatter.ofPattern("MM/DD/yyyy")
-            val expirationDateParsed = formatter
-                .withZone(TimeZone.getDefault().toZoneId())
-                .parse(expirationDate?.text.toString())
-            expirationDateFormatted = formatter.format(expirationDateParsed)
-        } catch (exception : DateTimeParseException) {
-            highlightFieldRed(expirationDate)
-            return
-        }
+        // try {
+            // convert dates to year-month-day by parsing and then reformatting
+            // also checks if date is correctly formatted
+            val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+            val expirationDateParsed = LocalDate.parse(expirationDate?.text.toString(), formatter)
+                .atStartOfDay().atZone(ZoneId.systemDefault())
+            dateMilliseconds = expirationDateParsed.toInstant().toEpochMilli()
+            val ymdFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+            expirationDateFormatted = ymdFormatter.format(expirationDateParsed)
+        //} catch (exception : DateTimeParseException) {
+            // notify of mistake
+        //    highlightFieldRed(expirationDate)
+        //    return
+        //}
         val barcode = view?.findViewById<EditText>(R.id.itemBarcode)
         val currentDate = LocalDateTime.now()
         val lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
         val selectedItem = location?.selectedItem as Cursor
 
         val dbOp = DBOperations()
-        dbOp.addItem(baseContext, name?.text.toString(), barcode?.text.toString(),
+        val rowId = dbOp.addItem(baseContext, name?.text.toString(), barcode?.text.toString(),
             expirationDateFormatted, selectedItem.getString(1).toString(), lifetime.toString(),
             description?.text.toString(), currentDate.toString())
+        Log.d("rodId", rowId.toString())
+        if (rowId != null) {
+            val listener = OnAlarmListener{sendNotificationNow(rowId)}
+            val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
+            var lifetimeOffset = Integer.parseInt(lifetime.toString()) * 86400000
+            var date = dateMilliseconds + lifetimeOffset
+            alarmManager.setWindow(
+                RTC,
+                date,
+                700000,
+                null,
+                listener,
+                null
+            )
+        }
+        // TODO: add item id/reference
+        // notification channel is created in onCreate() for mainActivity()
+        val homeIntent = Intent(this.baseContext, MainActivity::class.java)
+        startActivity(homeIntent)
+    }
 
-        var bulder = NotificationCompat.Builder(this.baseContext)
+    fun sendNotificationNow(itemId : Long) {
+        val intent = Intent(this.baseContext, MainActivity::class.java)
+        val pendingIntent =
+            PendingIntent.getActivity(this.baseContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val builder =
+            NotificationCompat.Builder(this.baseContext, getString(R.string.expiration_channel_id))
+                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                .setContentTitle("Expiring: $itemId")
+                .setContentText("notification")
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        // TODO: add icon (setSmallIcon), setContentTitle, setContentText, setPriority, setContentIntent
+        // reference https://developer.android.com/develop/ui/views/notifications/build-notification
 
-        val formIntent = Intent(this.baseContext, MainActivity::class.java)
-        startActivity(formIntent)
+        with(NotificationManagerCompat.from(this.baseContext)) {
+            if (ActivityCompat.checkSelfPermission(
+                    baseContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                }
+
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                var notId = itemId.toInt()
+                this.notify(notId, builder.build())
+            }
+        }
     }
 }

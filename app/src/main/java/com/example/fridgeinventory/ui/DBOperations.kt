@@ -12,7 +12,7 @@ import java.sql.ResultSet
 
 class DBOperations {
     public fun addItem(context: Context, name: String, barcode : String, expiration : String,
-                location : String, lifetime : String, description : String, date : String) {
+                location : String, lifetime : String, description : String, date : String) : Long? {
         // Gets the data repository in write mode
         val dbHelper = DBHelper(context)
         val db = dbHelper.writableDatabase
@@ -31,6 +31,7 @@ class DBOperations {
 
         // Insert the new row, returning the primary key value of the new row
         val newRowId = db?.insert(DBContract.ItemEntry.TABLE_NAME, null, values)
+        return newRowId
     }
 
     public fun removeItem(context: Context, id: Int) {

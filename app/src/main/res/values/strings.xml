@@ -18,4 +18,7 @@
     <string name="date_sort_option">Date (ascending)</string>
     <string name="alpha_sort_option">Name</string>
     <string name="expiration_sort_option">Expiration Date</string>
+    <string name="expiration_notification_channel_name">expirations</string>
+    <string name="expiration_notification_channel_description">Expiration date notifications</string>
+    <string name="expiration_channel_id">expiration</string>
 </resources>
