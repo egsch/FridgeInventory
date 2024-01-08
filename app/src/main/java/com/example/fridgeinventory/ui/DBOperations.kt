@@ -1,25 +1,23 @@
 package com.example.fridgeinventory.ui
-
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
-import android.database.sqlite.SQLiteDatabase
 import com.example.fridgeinventory.DBContract
 import com.example.fridgeinventory.DBHelper
 import com.example.fridgeinventory.DBItemEntry
-import java.sql.ResultSet
 
 class DBOperations {
+    /* adds an item and returns the primary key id of the item */
     public fun addItem(context: Context, name: String, barcode : String, expiration : String,
-                location : String, lifetime : String, description : String, date : String) : Long? {
+                location : String, lifetime : String, description : String, date : String) : Int {
         // Gets the data repository in write mode
         val dbHelper = DBHelper(context)
         val db = dbHelper.writableDatabase
 
         // Create a new map of values, where column names are the keys
         val values = ContentValues().apply {
-            // put(DBContract.ItemEntry.ID_COL, id)
+            // don't set the id because we are using autoincrement
             put(DBContract.ItemEntry.BARCODE_COL, barcode)
             put(DBContract.ItemEntry.NAME_COL, name)
             put(DBContract.ItemEntry.EXPIRATION_COL, expiration)
@@ -31,17 +29,58 @@ class DBOperations {
 
         // Insert the new row, returning the primary key value of the new row
         val newRowId = db?.insert(DBContract.ItemEntry.TABLE_NAME, null, values)
-        return newRowId
+        if (newRowId != null && newRowId > 0) {
+            val newIdCursor = db.rawQuery("SELECT ${DBContract.ItemEntry.ID_COL} FROM ${DBContract.ItemEntry.TABLE_NAME} where rowid = $newRowId;", null)
+            newIdCursor.moveToFirst()
+            val newId = newIdCursor.getInt(0)
+            return newId
+        }
+        return -1
     }
 
+    /* removes an item */
     public fun removeItem(context: Context, id: Int) {
-        // todo: test
         val dbHelper = DBHelper(context)
-        var db = dbHelper.writableDatabase
+        val db = dbHelper.writableDatabase
 
         db.execSQL("DELETE FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id")
     }
 
+    /**
+     * Check if item exists
+     * true if exists, false if not
+     * uses id, NOT rowid
+     */
+    public fun itemExists(context: Context, id: Int) : Boolean {
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.writableDatabase
+
+        return db.rawQuery("SELECT FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null).moveToFirst()
+    }
+
+    public fun getItemEntry(context: Context?, id: Int) : DBItemEntry? {
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.writableDatabase
+
+        var cursor = db.rawQuery("SELECT FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null)
+        if (cursor.moveToFirst()) {
+            var itemEntry = DBItemEntry(
+                cursor.getInt(0),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4),
+                cursor.getString(5),
+                cursor.getString(1),
+                cursor.getString(6),
+                cursor.getString(7)
+            )
+            return itemEntry
+        } else {
+            return null
+        }
+    }
+
+    /* gets a list of all elements, with location filter applied */
     public fun readData(context: Context?, filter: String, sort: String) : ArrayList<DBItemEntry> {
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
@@ -54,7 +93,7 @@ class DBOperations {
 
         val cursor: Cursor = db.rawQuery(queryString, null)
         // create array list (will need to make some sort of item model)
-        var dataset : ArrayList<DBItemEntry> = ArrayList();
+        var dataset : ArrayList<DBItemEntry> = ArrayList()
         if (cursor.moveToFirst()) {
             do {
                 // todo: reading wrong data into elements
@@ -67,11 +106,12 @@ class DBOperations {
                     cursor.getString(1),
                     cursor.getString(6),
                     cursor.getString(7)
-                );
+                )
                 dataset.add(itemEntry)
             } while (cursor.moveToNext())
         }
-        return dataset;
+        cursor.close()
+        return dataset
     }
 
     /**
@@ -87,6 +127,7 @@ class DBOperations {
                 locations.add(cursor.getString(0))
             } while (cursor.moveToNext())
         }
+        cursor.close()
         return locations
     }
 
@@ -101,6 +142,7 @@ class DBOperations {
             val newRowId = db?.insert(DBContract.LocationEntry.TABLE_NAME, null, ContentValues(1).apply { put(DBContract.LocationEntry.NAME_COL, locationString) })
             return true
         }
+        cursor.close()
         return false
     }
 
@@ -132,6 +174,7 @@ class DBOperations {
                 dataset.add(itemEntry)
             } while (cursor.moveToNext())
         }
+        cursor.close()
         return dataset
     }
 

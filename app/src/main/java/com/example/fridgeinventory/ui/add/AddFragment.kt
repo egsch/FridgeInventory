@@ -1,5 +1,4 @@
 package com.example.fridgeinventory.ui.add
-
 import android.app.Activity
 import android.Manifest
 import android.app.AlarmManager
@@ -21,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.fridgeinventory.*
 import com.example.fridgeinventory.databinding.FragmentDashboardBinding
@@ -32,14 +30,12 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import java.io.IOException
-import java.lang.System.currentTimeMillis
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.TimeZone
 
 class AddFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
@@ -124,18 +120,15 @@ class AddFragment : Fragment() {
 
         val buttonCamera = root.findViewById<Button>(R.id.cameraButton)
         buttonCamera?.setOnClickListener{
-
-            Log.d("here", "here")
             val cameraIntent = Intent(this.baseContext, CameraActivity::class.java)
             intentLauncher.launch(cameraIntent)
-
         }
 
         return root
     }
 
     private fun highlightFieldRed(editText: EditText?) {
-        editText?.setError("Incorrect Date Format")
+        editText?.setError(getString(R.string.incorrect_date_format))
     }
 
     private fun processSubmit(){
@@ -143,9 +136,15 @@ class AddFragment : Fragment() {
         val description = view?.findViewById<EditText>(R.id.itemDescription)
         val location = view?.findViewById<Spinner>(R.id.itemLocation)
         val expirationDate = view?.findViewById<EditText>(R.id.itemExpiration)
+        val barcode = view?.findViewById<EditText>(R.id.itemBarcode)
+        val lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
+        val selectedItem = location?.selectedItem as Cursor // selected location from spinner
+        val currentDate = LocalDateTime.now()
+
+        // check if date is formatted correctly; format in YYYY/MM/DD for sorting
         var dateMilliseconds : Long
         val expirationDateFormatted : String
-        // try {
+        try {
             // convert dates to year-month-day by parsing and then reformatting
             // also checks if date is correctly formatted
             val formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
@@ -154,26 +153,32 @@ class AddFragment : Fragment() {
             dateMilliseconds = expirationDateParsed.toInstant().toEpochMilli()
             val ymdFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
             expirationDateFormatted = ymdFormatter.format(expirationDateParsed)
-        //} catch (exception : DateTimeParseException) {
+        } catch (exception : DateTimeParseException) {
             // notify of mistake
-        //    highlightFieldRed(expirationDate)
-        //    return
-        //}
-        val barcode = view?.findViewById<EditText>(R.id.itemBarcode)
-        val currentDate = LocalDateTime.now()
-        val lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
-        val selectedItem = location?.selectedItem as Cursor
+            highlightFieldRed(expirationDate)
+            return
+        }
 
+        // add item to database
         val dbOp = DBOperations()
         val rowId = dbOp.addItem(baseContext, name?.text.toString(), barcode?.text.toString(),
             expirationDateFormatted, selectedItem.getString(1).toString(), lifetime.toString(),
             description?.text.toString(), currentDate.toString())
-        Log.d("rodId", rowId.toString())
+        Log.d("rowId", rowId.toString())
+
+        // if added correctly, set alarm for notification
         if (rowId != null) {
+            // call sendNotificationNow() on alarm
             val listener = OnAlarmListener{sendNotificationNow(rowId)}
             val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
-            var lifetimeOffset = Integer.parseInt(lifetime.toString()) * 86400000
+            var lifetimeOffset = 0
+            if (lifetime?.text.toString() != "" && lifetime != null) {
+                lifetimeOffset = Integer.parseInt(lifetime?.text.toString()) * 86400000
+            }
             var date = dateMilliseconds + lifetimeOffset
+            Log.d("Notification date", Instant.ofEpochMilli(date).toString())
+            // used window alarm since we don't need exact alarm - could switch to just set()
+            // currently sending at midnight in current time zone (at time of addition)
             alarmManager.setWindow(
                 RTC,
                 date,
@@ -183,25 +188,32 @@ class AddFragment : Fragment() {
                 null
             )
         }
-        // TODO: add item id/reference
+
         // notification channel is created in onCreate() for mainActivity()
+        // send user home after submission!
         val homeIntent = Intent(this.baseContext, MainActivity::class.java)
         startActivity(homeIntent)
     }
 
-    fun sendNotificationNow(itemId : Long) {
+    private fun sendNotificationNow(itemId: Int) {
+        // check if item has been deleted:
+        var dbOp = DBOperations()
+        if (!dbOp.itemExists(this.baseContext, itemId)){
+            return
+        }
+        // get DBItemEntry object
+        val itemEntry : DBItemEntry = dbOp.getItemEntry(this.baseContext, itemId) ?: return
+
         val intent = Intent(this.baseContext, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this.baseContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val builder =
             NotificationCompat.Builder(this.baseContext, getString(R.string.expiration_channel_id))
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
-                .setContentTitle("Expiring: $itemId")
-                .setContentText("notification")
+                .setContentTitle("Expiring: ${itemEntry.name}")
+                .setContentText("${itemEntry.expiration}")
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        // TODO: add icon (setSmallIcon), setContentTitle, setContentText, setPriority, setContentIntent
-        // reference https://developer.android.com/develop/ui/views/notifications/build-notification
 
         with(NotificationManagerCompat.from(this.baseContext)) {
             if (ActivityCompat.checkSelfPermission(

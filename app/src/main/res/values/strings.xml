@@ -21,4 +21,5 @@
     <string name="expiration_notification_channel_name">expirations</string>
     <string name="expiration_notification_channel_description">Expiration date notifications</string>
     <string name="expiration_channel_id">expiration</string>
+    <string name="incorrect_date_format">Incorrect Date Format</string>
 </resources>

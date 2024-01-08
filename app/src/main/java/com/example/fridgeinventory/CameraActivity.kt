@@ -118,11 +118,10 @@ class CameraActivity : AppCompatActivity() {
 // define the actual functionality of our analysis use case
         analysisUseCase.setAnalyzer(
             // newSingleThreadExecutor() will let us perform analysis on a single worker thread
-            Executors.newSingleThreadExecutor(),
-            { imageProxy ->
-                processImageProxy(scanner, imageProxy)
-            }
-        )
+            Executors.newSingleThreadExecutor()
+        ) { imageProxy ->
+            processImageProxy(scanner, imageProxy)
+        }
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
