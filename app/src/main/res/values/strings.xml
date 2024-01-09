@@ -22,4 +22,5 @@
     <string name="expiration_notification_channel_description">Expiration date notifications</string>
     <string name="expiration_channel_id">expiration</string>
     <string name="incorrect_date_format">Incorrect Date Format</string>
+    <string name="permissionsNotGranted">Permissions are not granted; enable in settings</string>
 </resources>

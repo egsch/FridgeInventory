@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             val searchBar = binding.searchBar
             val query = searchBar.query
-            onQueryTextSubmit(query.toString())
+            onQueryTextSubmitFunc(query.toString())
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -117,18 +117,18 @@ class HomeFragment : Fragment() {
         // set up search bar action
         val searchBar = binding.searchBar
         searchBar.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = onQueryTextSubmit(query)
+            override fun onQueryTextSubmit(query: String?): Boolean = onQueryTextSubmitFunc(query)
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
         })
-        searchBar.setOnCloseListener { onQueryTextSubmit("") }
+        searchBar.setOnCloseListener { onQueryTextSubmitFunc("") }
 
         return root
     }
 
-    fun onQueryTextSubmit(query: String?): Boolean {
+    fun onQueryTextSubmitFunc(query: String?): Boolean {
         val dataset : ArrayList<DBItemEntry>
         val dbOperations = DBOperations()
         // get filter

@@ -114,7 +114,7 @@ class AddFragment : Fragment() {
                     barcodeItem?.setText(resultBarcode.toString())
                     // get data from OpenFoodFacts API
                     // get https://world.openfoodfacts.org/api/v2/product/<barcode>.json
-                    get("https://world.openfoodfacts.org/api/v2/product/$result.json")
+                    get("https://world.openfoodfacts.org/api/v2/product/$resultBarcode.json")
                 }
             }
 
@@ -164,7 +164,6 @@ class AddFragment : Fragment() {
         val rowId = dbOp.addItem(baseContext, name?.text.toString(), barcode?.text.toString(),
             expirationDateFormatted, selectedItem.getString(1).toString(), lifetime.toString(),
             description?.text.toString(), currentDate.toString())
-        Log.d("rowId", rowId.toString())
 
         // if added correctly, set alarm for notification
         if (rowId != null) {
@@ -176,7 +175,6 @@ class AddFragment : Fragment() {
                 lifetimeOffset = Integer.parseInt(lifetime?.text.toString()) * 86400000
             }
             var date = dateMilliseconds + lifetimeOffset
-            Log.d("Notification date", Instant.ofEpochMilli(date).toString())
             // used window alarm since we don't need exact alarm - could switch to just set()
             // currently sending at midnight in current time zone (at time of addition)
             alarmManager.setWindow(
