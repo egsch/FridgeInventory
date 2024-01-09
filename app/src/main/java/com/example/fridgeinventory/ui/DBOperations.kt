@@ -33,6 +33,7 @@ class DBOperations {
             val newIdCursor = db.rawQuery("SELECT ${DBContract.ItemEntry.ID_COL} FROM ${DBContract.ItemEntry.TABLE_NAME} where rowid = $newRowId;", null)
             newIdCursor.moveToFirst()
             val newId = newIdCursor.getInt(0)
+            newIdCursor.close()
             return newId
         }
         return -1
@@ -55,16 +56,19 @@ class DBOperations {
         val dbHelper = DBHelper(context)
         val db = dbHelper.writableDatabase
 
-        return db.rawQuery("SELECT FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null).moveToFirst()
+        val cursor = db.rawQuery("SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null)
+        val bool = cursor.moveToFirst()
+        cursor.close()
+        return bool
     }
 
     public fun getItemEntry(context: Context?, id: Int) : DBItemEntry? {
         val dbHelper = DBHelper(context)
         val db = dbHelper.writableDatabase
 
-        var cursor = db.rawQuery("SELECT FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null)
+        val cursor = db.rawQuery("SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id=$id", null)
         if (cursor.moveToFirst()) {
-            var itemEntry = DBItemEntry(
+            val itemEntry = DBItemEntry(
                 cursor.getInt(0),
                 cursor.getString(2),
                 cursor.getString(3),
@@ -78,6 +82,7 @@ class DBOperations {
         } else {
             return null
         }
+        cursor.close()
     }
 
     /* gets a list of all elements, with location filter applied */
@@ -93,11 +98,10 @@ class DBOperations {
 
         val cursor: Cursor = db.rawQuery(queryString, null)
         // create array list (will need to make some sort of item model)
-        var dataset : ArrayList<DBItemEntry> = ArrayList()
+        val dataset : ArrayList<DBItemEntry> = ArrayList()
         if (cursor.moveToFirst()) {
             do {
-                // todo: reading wrong data into elements
-                var itemEntry = DBItemEntry(
+                val itemEntry = DBItemEntry(
                     cursor.getInt(0),
                     cursor.getString(2),
                     cursor.getString(3),
@@ -139,7 +143,7 @@ class DBOperations {
         val db = dbHelper.readableDatabase
         val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME} WHERE ${DBContract.LocationEntry.NAME_COL} = '" + locationString + "';", null)
         if (!cursor.moveToFirst()) {
-            val newRowId = db?.insert(DBContract.LocationEntry.TABLE_NAME, null, ContentValues(1).apply { put(DBContract.LocationEntry.NAME_COL, locationString) })
+            db?.insert(DBContract.LocationEntry.TABLE_NAME, null, ContentValues(1).apply { put(DBContract.LocationEntry.NAME_COL, locationString) })
             return true
         }
         cursor.close()
@@ -150,7 +154,7 @@ class DBOperations {
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
 
-        var dataset : ArrayList<DBItemEntry> = ArrayList();
+        val dataset : ArrayList<DBItemEntry> = ArrayList()
         db.execSQL("INSERT INTO t3(docid, "+DBContract.ItemEntry.NAME_COL+", "+DBContract.ItemEntry.BARCODE_COL+") SELECT id, " +DBContract.ItemEntry.NAME_COL+ ", "+DBContract.ItemEntry.BARCODE_COL+" FROM "+DBContract.ItemEntry.TABLE_NAME+";" )
         val queryString : String = if (location == "") {
             "SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE id IN (SELECT docid FROM t3 WHERE t3 MATCH '\"$searchTerm\"') ORDER BY $sort;"
@@ -161,7 +165,7 @@ class DBOperations {
             queryString, null)
         if (cursor.moveToFirst()) {
             do {
-                var itemEntry = DBItemEntry(
+                val itemEntry = DBItemEntry(
                     cursor.getInt(0),
                     cursor.getString(2),
                     cursor.getString(3),
@@ -170,7 +174,7 @@ class DBOperations {
                     cursor.getString(1),
                     cursor.getString(6),
                     cursor.getString(7)
-                );
+                )
                 dataset.add(itemEntry)
             } while (cursor.moveToNext())
         }

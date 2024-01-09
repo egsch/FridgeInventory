@@ -23,4 +23,18 @@
     <string name="expiration_channel_id">expiration</string>
     <string name="incorrect_date_format">Incorrect Date Format</string>
     <string name="permissionsNotGranted">Permissions are not granted; enable in settings</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_item_name">Enter Item Name</string>
+    <string name="enter_an_item">Enter an Item</string>
+    <string name="enter_item_description">Enter Item Description (optional)</string>
+    <string name="enter_item_location">Enter Item Location</string>
+    <string name="enter_item_expiration_date">Enter Item Expiration Date</string>
+    <string name="enter_item_barcode">Enter Item Barcode (optional)</string>
+    <string name="create_entry">Create</string>
+    <string name="lifetime_past_expiration">Lifetime Past Expiration (days, optional)</string>
+    <string name="camera">Camera</string>
+    <string name="enter_new_location">Enter new location</string>
+    <string name="submit">Submit</string>
+    <string name="remove">Remove</string>
+    <string name="expires_display">Expires %1$s</string>
 </resources>

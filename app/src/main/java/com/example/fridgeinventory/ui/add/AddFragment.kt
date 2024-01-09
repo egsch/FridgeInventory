@@ -30,7 +30,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import okhttp3.*
 import java.io.IOException
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -172,7 +171,7 @@ class AddFragment : Fragment() {
             val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
             var lifetimeOffset = 0
             if (lifetime?.text.toString() != "" && lifetime != null) {
-                lifetimeOffset = Integer.parseInt(lifetime?.text.toString()) * 86400000
+                lifetimeOffset = Integer.parseInt(lifetime.text.toString()) * 86400000
             }
             var date = dateMilliseconds + lifetimeOffset
             // used window alarm since we don't need exact alarm - could switch to just set()

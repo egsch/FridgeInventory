@@ -36,7 +36,7 @@ private lateinit var binding: ActivityFormBinding
         var description = findViewById<EditText>(R.id.itemDescription)
         var location = findViewById<EditText>(R.id.itemLocation)
         var expirationDate = findViewById<EditText>(R.id.itemExpiration)
-        var expirationDateFormatted = DateTimeFormatter.ofPattern("MM/DD/YYYY")
+        var expirationDateFormatted = DateTimeFormatter.ofPattern("MM/DD/yyyy")
             .parse(expirationDate.text).toString()
         var barcode = findViewById<EditText>(R.id.itemBarcode)
         var currentDate = LocalDateTime.now()

@@ -53,7 +53,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
         holder.textView.text = dataSet[position].name
         holder.barcodeTextView.text = dataSet[position].barcode
 
-        holder.dateTextView.text = "Expires " + dataSet[position].expiration
+        holder.dateTextView.text = holder.dateTextView.context.getString(R.string.expires_display, dataSet[position].expiration)
         holder.locationTextView.text = dataSet[position].location
         holder.otherView.visibility = if (isOpened) View.VISIBLE else View.GONE
 
@@ -66,9 +66,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
             val dbOp = DBOperations()
             dbOp.removeItem(holder.itemView.context, dataSet[position].id)
             dataSet.removeAt(position) // todo: not efficient?
-            // todo: kinda buggy
             notifyDataSetChanged()
-            // notifyItemRemoved(position)
         }
     }
 }

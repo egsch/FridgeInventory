@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:text="Camera" />
+        android:text="@string/camera" />
 
     <HorizontalScrollView
         android:id="@+id/filterView"

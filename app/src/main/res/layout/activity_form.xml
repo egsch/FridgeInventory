@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="100dp"
-        android:text="Enter an Item"
+        android:text="@string/enter_an_item"
         />
 
     <EditText
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/formHeader"
-        android:hint="Enter Item Name"
+        android:hint="@string/enter_item_name"
         />
 
     <EditText
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/itemName"
-        android:hint="Enter Item Description (optional)"
+        android:hint="@string/enter_item_description"
         />
 
     <EditText
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/itemDescription"
-        android:hint="Enter Item Location"
+        android:hint="@string/enter_item_location"
         />
 
     <EditText
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:inputType="date"
         app:layout_constraintTop_toBottomOf="@id/itemLocation"
-        android:hint="Enter Item Expiration Date"
+        android:hint="@string/enter_item_expiration_date"
         />
 
     <EditText
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/itemExpiration"
         android:inputType="number"
-        android:hint="Enter Item Barcode (optional)"
+        android:hint="@string/enter_item_barcode"
         />
 
     <Button
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/itemBarcode"
-        android:text="Create Entry"
+        android:text="@string/create_entry"
         />
 
 

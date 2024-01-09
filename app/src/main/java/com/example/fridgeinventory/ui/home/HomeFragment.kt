@@ -90,6 +90,7 @@ class HomeFragment : Fragment() {
                 locationOptions.add(cursor.getString(1))
             } while (cursor.moveToNext())
         }
+        cursor.close()
         val arrayAdapter = ArrayAdapter(
             context!!,
             android.R.layout.simple_spinner_dropdown_item,

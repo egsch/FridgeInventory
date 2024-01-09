@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.camera.mlkit.vision.MlKitAnalyzer
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.CameraController.COORDINATE_SYSTEM_VIEW_REFERENCED
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -26,7 +25,7 @@ class CameraActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
-        var cancelButton = findViewById<Button>(R.id.cancel_button)
+        val cancelButton = findViewById<Button>(R.id.cancel_button)
         cancelButton.setOnClickListener {
             val intent = Intent()
             setResult(Activity.RESULT_CANCELED, intent)
