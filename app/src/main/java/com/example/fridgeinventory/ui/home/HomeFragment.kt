@@ -31,13 +31,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var intentLauncher : ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        /* TODO: remove
-        val resultFilter = result.data?.getIntExtra("filter",  -1)
-        Log.d("resultFilter", resultFilter.toString())
-        if (resultFilter != -1 && resultFilter != null) {
-            Log.d("resultFilter", resultFilter.toString())
-            binding.filterLocationSpinner.setSelection(resultFilter)
-        }*/
         if (result.resultCode == Activity.RESULT_OK) {
             val searchBar = binding.searchBar
             searchBar.setQuery(result.data?.getStringExtra("barcode"), true)
