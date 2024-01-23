@@ -5,6 +5,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,15 @@ class HomeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
     private var intentLauncher : ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        /* TODO: remove
+        val resultFilter = result.data?.getIntExtra("filter",  -1)
+        Log.d("resultFilter", resultFilter.toString())
+        if (resultFilter != -1 && resultFilter != null) {
+            Log.d("resultFilter", resultFilter.toString())
+            binding.filterLocationSpinner.setSelection(resultFilter)
+        }*/
         if (result.resultCode == Activity.RESULT_OK) {
             val searchBar = binding.searchBar
             searchBar.setQuery(result.data?.getStringExtra("barcode"), true)
@@ -57,8 +66,17 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        // get filter arguments:
+        var filter = arguments?.getInt("filterArg")
+        Log.d("filterArg", filter.toString())
+        var filterString = ""
+        if (filter != null && filter >= 0) {
+            Log.d("filterArg", filter.toString())
+            filterString = filter.toString()
+        }
+
         val dbOperations = DBOperations()
-        val dataset = dbOperations.readData(context, "", DBContract.ItemEntry.EXPIRATION_COL)
+        val dataset = dbOperations.readData(context, filterString, DBContract.ItemEntry.EXPIRATION_COL)
 
         // set up recycler view for inventory contents
         val inventoryAdapter = InventoryAdapter(dataset)
@@ -98,6 +116,10 @@ class HomeFragment : Fragment() {
         )
         spinner.adapter = arrayAdapter
         spinner.onItemSelectedListener = SpinnerActivity()
+        if (filter != null && filter > 0) {
+            spinner.setSelection(filter)
+        }
+
 
         // set up sort spinner
         val sortOptions = ArrayList<String>()

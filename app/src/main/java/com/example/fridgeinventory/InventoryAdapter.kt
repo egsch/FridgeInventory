@@ -65,7 +65,7 @@ class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
         holder.removeButton.setOnClickListener {
             val dbOp = DBOperations()
             dbOp.removeItem(holder.itemView.context, dataSet[position].id)
-            dataSet.removeAt(position) // todo: not efficient?
+            dataSet.removeAt(position) // todo: improve efficiency, possibly by directly using sql
             notifyDataSetChanged()
         }
     }

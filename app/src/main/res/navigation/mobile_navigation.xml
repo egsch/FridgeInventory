@@ -10,6 +10,11 @@
         android:name="com.example.fridgeinventory.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
+        <argument
+            android:name="filterArg"
+            app:argType="integer"
+            android:defaultValue="-1"
+            />
 
     <fragment
         android:id="@+id/navigation_dashboard"

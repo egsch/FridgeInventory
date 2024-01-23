@@ -1,6 +1,5 @@
 package com.example.fridgeinventory.ui.notifications
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,15 +9,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.fridgeinventory.MainActivity
 import com.example.fridgeinventory.R
 import com.example.fridgeinventory.databinding.FragmentNotificationsBinding
 import com.example.fridgeinventory.ui.DBOperations
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 class NotificationsFragment : Fragment() {
     private var _binding: FragmentNotificationsBinding? = null
@@ -27,22 +29,67 @@ class NotificationsFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    class LocationAdapter(private val dataSet: ArrayList<String>) :
+        RecyclerView.Adapter<LocationAdapter.ViewHolder>()  {
+        class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val textView: TextView
+            init {
+                // Define click listener for the ViewHolder's View
+                textView = view.findViewById(R.id.location_list_title)
+            }
+        }
+
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): ViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.location_list_item, parent, false)
+
+            return ViewHolder(view)
+        }
+
+        override fun getItemCount(): Int {
+            return dataSet.size
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.textView.text = dataSet[position]
+
+            holder.itemView.setOnClickListener{
+                // Go to home, set spinner's selected item as position, run search
+                //val intent = Intent(it.context, MainActivity::class.java)
+                //intent.putExtra("filter", position)
+                //startActivity(it.context, intent, null)
+                // navigate to home/list view using navController
+                val bundle = bundleOf("filterArg" to position)
+                holder.itemView.findNavController().navigate(R.id.navigation_home, bundle)
+            }
+        }
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textNotifications
-        var locations = DBOperations().getLocations(context)
+        val locations = DBOperations().getLocations(context)
         textView.text = locations.toString()
 
-        var buttonSubmit = root.findViewById<Button>(R.id.submit_location)
+        val locationAdapter = LocationAdapter(locations)
+        val recyclerView = binding.locationRv
+        recyclerView.adapter = locationAdapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+        )
+
+        val buttonSubmit = root.findViewById<Button>(R.id.submit_location)
         buttonSubmit?.setOnClickListener{
             processSubmit()
         }
@@ -51,17 +98,23 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun processSubmit(){
-        var locationName = view?.findViewById<EditText>(R.id.input_location)
+        val locationName = view?.findViewById<EditText>(R.id.input_location)
 
-        var dbOp = DBOperations()
-        var returnCode = dbOp.addLocation(context, locationName?.text.toString())
+        val dbOp = DBOperations()
+        val returnCode = dbOp.addLocation(context, locationName?.text.toString())
         Log.d("processing adding location", returnCode.toString())
         if (!returnCode) {
-            locationName?.error = "Location already exists"
+            locationName?.error = getString(R.string.location_already_exists)
         } else {
-            val textView: TextView = binding.textNotifications
-            var locations = DBOperations().getLocations(context)
-            textView.text = locations.toString()
+            val locations = DBOperations().getLocations(context)
+            val locationAdapter = LocationAdapter(locations)
+            val recyclerView = binding.locationRv
+            recyclerView.adapter = locationAdapter
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.addItemDecoration(
+                DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            )
+            locationName?.setText("")
         }
     }
 
