@@ -89,8 +89,8 @@ class HomeFragment : Fragment() {
 
         val dbHelper = DBHelper(context)
         val db : SQLiteDatabase = dbHelper.readableDatabase
-        val spinner: Spinner = root.findViewById(R.id.filter_location_spinner)
-        val sortSpinner : Spinner = root.findViewById(R.id.sort_spinner)
+        val spinner: Spinner = binding.filterLocationSpinner
+        val sortSpinner : Spinner = binding.sortSpinner
 
         // set up location spinner
         val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} as _id,${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME};", null)

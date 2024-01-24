@@ -11,6 +11,11 @@ import com.example.fridgeinventory.ui.DBOperations
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+* Note: This activity is NO LONGER IN USE!
+ * todo: delete
+*/
+
 class FormActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -19,8 +24,8 @@ private lateinit var binding: ActivityFormBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-     binding = ActivityFormBinding.inflate(layoutInflater)
-     setContentView(binding.root)
+        binding = ActivityFormBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         var extras: Bundle? = intent.extras
         var barcode = extras?.getString("barcode")
@@ -32,13 +37,13 @@ private lateinit var binding: ActivityFormBinding
     }
 
     private fun processSubmit(){
-        var name = findViewById<EditText>(R.id.itemName)
-        var description = findViewById<EditText>(R.id.itemDescription)
-        var location = findViewById<EditText>(R.id.itemLocation)
-        var expirationDate = findViewById<EditText>(R.id.itemExpiration)
+        var name = binding.itemName
+        var description = binding.itemDescription
+        var location = binding.itemLocation
+        var expirationDate = binding.itemExpiration
         var expirationDateFormatted = DateTimeFormatter.ofPattern("MM/DD/yyyy")
             .parse(expirationDate.text).toString()
-        var barcode = findViewById<EditText>(R.id.itemBarcode)
+        var barcode = binding.itemBarcode
         var currentDate = LocalDateTime.now()
         var lifetime = "123"
 

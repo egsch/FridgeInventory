@@ -15,17 +15,21 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.fridgeinventory.databinding.ActivityCameraBinding
+import com.example.fridgeinventory.databinding.FragmentDashboardBinding
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 
 class CameraActivity : AppCompatActivity() {
     private var barcodeFound = false;
+    private lateinit var binding: ActivityCameraBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
-        val cancelButton = findViewById<Button>(R.id.cancel_button)
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        val cancelButton = binding.cancelButton
         cancelButton.setOnClickListener {
             val intent = Intent()
             setResult(Activity.RESULT_CANCELED, intent)
@@ -82,7 +86,7 @@ class CameraActivity : AppCompatActivity() {
 
         // instance of barcode scanning from MLKit
         val scanner = BarcodeScanning.getClient(options)
-        val preview = findViewById<PreviewView>(R.id.viewFinder)
+        val preview = binding.viewFinder
 
         cameraController.setImageAnalysisAnalyzer(
             ContextCompat.getMainExecutor(this),

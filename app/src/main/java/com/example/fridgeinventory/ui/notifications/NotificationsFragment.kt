@@ -82,7 +82,7 @@ class NotificationsFragment : Fragment() {
             DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
         )
 
-        val buttonSubmit = root.findViewById<Button>(R.id.submit_location)
+        val buttonSubmit = binding.submitLocation
         buttonSubmit?.setOnClickListener{
             processSubmit()
         }
@@ -91,7 +91,7 @@ class NotificationsFragment : Fragment() {
     }
 
     private fun processSubmit(){
-        val locationName = view?.findViewById<EditText>(R.id.input_location)
+        val locationName = binding.inputLocation
 
         val dbOp = DBOperations()
         val returnCode = dbOp.addLocation(context, locationName?.text.toString())
