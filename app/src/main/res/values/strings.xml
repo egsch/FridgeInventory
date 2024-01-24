@@ -1,6 +1,41 @@
 <resources>
     <string name="app_name">Fridge Inventory</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_dashboard">Add</string>
+    <string name="title_notifications">Locations</string>
+    <string name="title_activity_form">FormActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Strings used for sorting and filtering spinners -->
+    <string name="default_loc_filter_label">Any Location</string>
+    <string name="date_sort_option">Date (ascending)</string>
+    <string name="alpha_sort_option">Name</string>
+    <string name="expiration_sort_option">Expiration Date</string>
+    <string name="expiration_notification_channel_name">expirations</string>
+    <string name="expiration_notification_channel_description">Expiration date notifications</string>
+    <string name="expiration_channel_id">expiration</string>
+    <string name="incorrect_date_format">Incorrect Date Format</string>
+    <string name="permissionsNotGranted">Permissions are not granted; enable in settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_item_name">Enter Item Name</string>
+    <string name="enter_an_item">Enter an Item</string>
+    <string name="enter_item_description">Enter Item Description (optional)</string>
+    <string name="enter_item_location">Enter Item Location</string>
+    <string name="enter_item_expiration_date">Enter Item Expiration Date</string>
+    <string name="enter_item_barcode">Enter Item Barcode (optional)</string>
+    <string name="create_entry">Create</string>
+    <string name="lifetime_past_expiration">Lifetime Past Expiration (days, optional)</string>
+    <string name="camera">Camera</string>
+    <string name="enter_new_location">Enter new location</string>
+    <string name="submit">Submit</string>
+    <string name="remove">Remove</string>
+    <string name="expires_display">Expires %1$s</string>
+    <string name="location_already_exists">Location already exists</string>
 </resources>

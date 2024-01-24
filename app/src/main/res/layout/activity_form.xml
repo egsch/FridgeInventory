@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
-    tools:context=".ui.add.AddFragment">
+    android:padding="20dp"
+    >
 
     <TextView
         android:id="@+id/formHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="100dp"
         android:text="@string/enter_an_item"
         />
 
@@ -20,7 +21,6 @@
         android:id="@+id/itemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/formHeader"
         android:hint="@string/enter_item_name"
         />
@@ -29,18 +29,17 @@
         android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/itemName"
         android:hint="@string/enter_item_description"
         />
 
-    <Spinner
+    <EditText
         android:id="@+id/itemLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        app:layout_constraintTop_toBottomOf="@id/itemDescription"/>
-
+        app:layout_constraintTop_toBottomOf="@id/itemDescription"
+        android:hint="@string/enter_item_location"
+        />
 
     <EditText
         android:id="@+id/itemExpiration"
@@ -52,19 +51,10 @@
         />
 
     <EditText
-        android:id="@+id/itemLifetime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        app:layout_constraintTop_toBottomOf="@id/itemExpiration"
-        android:hint="@string/lifetime_past_expiration"
-        />
-
-    <EditText
         android:id="@+id/itemBarcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/itemLifetime"
+        app:layout_constraintTop_toBottomOf="@id/itemExpiration"
         android:inputType="number"
         android:hint="@string/enter_item_barcode"
         />
@@ -77,11 +67,5 @@
         android:text="@string/create_entry"
         />
 
-    <Button
-        android:id="@+id/cameraButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/submitButton"
-        android:text="@string/camera"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
