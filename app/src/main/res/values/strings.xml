@@ -23,7 +23,7 @@
     <string name="expiration_channel_id">expiration</string>
     <string name="incorrect_date_format">Incorrect Date Format</string>
     <string name="permissionsNotGranted">Permissions are not granted; enable in settings</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="enter_item_name">Enter Item Name</string>
     <string name="enter_an_item">Enter an Item</string>
     <string name="enter_item_description">Enter Item Description (optional)</string>

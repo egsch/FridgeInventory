@@ -1,6 +1,5 @@
 package com.example.fridgeinventory.ui.notifications
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,15 +8,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fridgeinventory.MainActivity
 import com.example.fridgeinventory.R
 import com.example.fridgeinventory.databinding.FragmentNotificationsBinding
 import com.example.fridgeinventory.ui.DBOperations
@@ -76,10 +72,7 @@ class NotificationsFragment : Fragment() {
     ): View {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        val textView: TextView = binding.textNotifications
         val locations = DBOperations().getLocations(context)
-        textView.text = locations.toString()
 
         val locationAdapter = LocationAdapter(locations)
         val recyclerView = binding.locationRv

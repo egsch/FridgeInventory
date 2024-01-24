@@ -45,7 +45,7 @@ class AddFragment : Fragment() {
     @Serializable class ItemResponse (val product : FoodItem)
     @Serializable class FoodItem (val product_name_en: String = "")
     fun useResponseString(responseString :  String) {
-        val nameItem = view?.findViewById<EditText>(R.id.itemName)
+        val nameItem = binding.itemName
         nameItem?.post {
             nameItem.setText(responseString)
         }
@@ -86,7 +86,7 @@ class AddFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val buttonSubmit = root.findViewById<Button>(R.id.submitButton)
+        val buttonSubmit = binding.submitButton
         buttonSubmit?.setOnClickListener{
             processSubmit()
         }
@@ -94,7 +94,7 @@ class AddFragment : Fragment() {
         val dbHelper = DBHelper(context)
         val db = dbHelper.readableDatabase
         // var results : ArrayList<String> = ArrayList<String>()
-        val spinner: Spinner = root.findViewById(R.id.itemLocation)
+        val spinner: Spinner = binding.itemLocation
         val cursor : Cursor = db.rawQuery("SELECT ${DBContract.LocationEntry.NAME_COL} as _id,${DBContract.LocationEntry.NAME_COL} FROM ${DBContract.LocationEntry.TABLE_NAME};", null)
         val columnArray = arrayOf(DBContract.LocationEntry.NAME_COL)
         val viewArray = intArrayOf(android.R.id.text1)
@@ -109,7 +109,7 @@ class AddFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val resultBarcode = result.data?.getStringExtra("barcode")
-                    val barcodeItem = view?.findViewById<EditText>(R.id.itemBarcode)
+                    val barcodeItem = binding.itemBarcode
                     barcodeItem?.setText(resultBarcode.toString())
                     // get data from OpenFoodFacts API
                     // get https://world.openfoodfacts.org/api/v2/product/<barcode>.json
@@ -117,7 +117,7 @@ class AddFragment : Fragment() {
                 }
             }
 
-        val buttonCamera = root.findViewById<Button>(R.id.cameraButton)
+        val buttonCamera = binding.cameraButton
         buttonCamera?.setOnClickListener{
             val cameraIntent = Intent(this.baseContext, CameraActivity::class.java)
             intentLauncher.launch(cameraIntent)
@@ -131,12 +131,12 @@ class AddFragment : Fragment() {
     }
 
     private fun processSubmit(){
-        val name = view?.findViewById<EditText>(R.id.itemName)
-        val description = view?.findViewById<EditText>(R.id.itemDescription)
-        val location = view?.findViewById<Spinner>(R.id.itemLocation)
-        val expirationDate = view?.findViewById<EditText>(R.id.itemExpiration)
-        val barcode = view?.findViewById<EditText>(R.id.itemBarcode)
-        val lifetime = view?.findViewById<EditText>(R.id.itemLifetime)
+        val name = binding.itemName
+        val description = binding.itemDescription
+        val location = binding.itemLocation
+        val expirationDate = binding.itemExpiration
+        val barcode = binding.itemBarcode
+        val lifetime = binding.itemLifetime
         val selectedItem = location?.selectedItem as Cursor // selected location from spinner
         val currentDate = LocalDateTime.now()
 

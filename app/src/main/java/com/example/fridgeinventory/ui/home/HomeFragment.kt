@@ -159,7 +159,7 @@ class HomeFragment : Fragment() {
         } else if (sort == context?.getString(R.string.expiration_sort_option).toString()) {
             sort = DBContract.ItemEntry.EXPIRATION_COL
         } else if (sort == context?.getString(R.string.alpha_sort_option).toString()) {
-            sort = DBContract.ItemEntry.NAME_COL
+            sort = DBContract.ItemEntry.NAME_COL + " COLLATE NOCASE"
         }
 
         if (query.isNullOrEmpty()) {
