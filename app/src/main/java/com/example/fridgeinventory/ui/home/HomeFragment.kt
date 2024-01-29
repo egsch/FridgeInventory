@@ -18,9 +18,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fridgeinventory.*
-import com.example.fridgeinventory.databinding.FragmentHomeBinding
+import com.example.fridgeinventory.CameraActivity
+import com.example.fridgeinventory.DBContract
+import com.example.fridgeinventory.DBHelper
+import com.example.fridgeinventory.DBItemEntry
 import com.example.fridgeinventory.DBOperations
+import com.example.fridgeinventory.InventoryAdapter
+import com.example.fridgeinventory.R
+import com.example.fridgeinventory.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
 
@@ -64,7 +69,7 @@ class HomeFragment : Fragment() {
         Log.d("filterArg", filter.toString())
         var filterString = ""
         if (filter != null && filter >= 0) {
-            Log.d("filterArg", filter.toString())
+            filter += 1     // to account for "Any Location"
             filterString = filter.toString()
         }
 
