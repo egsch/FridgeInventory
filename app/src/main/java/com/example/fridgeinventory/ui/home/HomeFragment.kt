@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fridgeinventory.*
 import com.example.fridgeinventory.databinding.FragmentHomeBinding
-import com.example.fridgeinventory.ui.DBOperations
+import com.example.fridgeinventory.DBOperations
 
 class HomeFragment : Fragment() {
 

@@ -1,12 +1,10 @@
-package com.example.fridgeinventory.ui.notifications
+package com.example.fridgeinventory.ui.locations
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -14,12 +12,12 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.fridgeinventory.DBOperations
 import com.example.fridgeinventory.R
-import com.example.fridgeinventory.databinding.FragmentNotificationsBinding
-import com.example.fridgeinventory.ui.DBOperations
+import com.example.fridgeinventory.databinding.FragmentLocationsBinding
 
 class NotificationsFragment : Fragment() {
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentLocationsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -70,7 +68,7 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentLocationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val locations = DBOperations().getLocations(context)
 

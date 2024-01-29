@@ -2,12 +2,10 @@ package com.example.fridgeinventory
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.example.fridgeinventory.DBContract.ItemEntry
-import com.example.fridgeinventory.ui.DBOperations
 
 const val DATABASE_NAME = "INVENTORY"
 

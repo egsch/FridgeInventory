@@ -1,4 +1,4 @@
-package com.example.fridgeinventory.ui.notifications
+package com.example.fridgeinventory.ui.locations
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

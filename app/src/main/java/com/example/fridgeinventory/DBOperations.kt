@@ -1,11 +1,8 @@
-package com.example.fridgeinventory.ui
+package com.example.fridgeinventory
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
-import com.example.fridgeinventory.DBContract
-import com.example.fridgeinventory.DBHelper
-import com.example.fridgeinventory.DBItemEntry
 
 class DBOperations {
     /* adds an item and returns the primary key id of the item */

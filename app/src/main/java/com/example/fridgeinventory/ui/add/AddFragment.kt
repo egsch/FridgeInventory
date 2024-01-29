@@ -1,6 +1,6 @@
 package com.example.fridgeinventory.ui.add
-import android.app.Activity
 import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.AlarmManager.OnAlarmListener
 import android.app.AlarmManager.RTC
@@ -15,20 +15,31 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.SimpleCursorAdapter
+import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
-import com.example.fridgeinventory.*
-import com.example.fridgeinventory.databinding.FragmentDashboardBinding
-import com.example.fridgeinventory.ui.DBOperations
+import com.example.fridgeinventory.CameraActivity
+import com.example.fridgeinventory.DBContract
+import com.example.fridgeinventory.DBHelper
+import com.example.fridgeinventory.DBItemEntry
+import com.example.fridgeinventory.MainActivity
+import com.example.fridgeinventory.R
+import com.example.fridgeinventory.databinding.FragmentAddBinding
+import com.example.fridgeinventory.DBOperations
 import kotlinx.serialization.MissingFieldException
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -37,7 +48,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 class AddFragment : Fragment() {
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
     private lateinit var baseContext: Context
     private val httpClient = OkHttpClient()
@@ -83,7 +94,7 @@ class AddFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentAddBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val buttonSubmit = binding.submitButton

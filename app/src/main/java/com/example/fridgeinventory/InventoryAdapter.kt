@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fridgeinventory.ui.DBOperations
 
 class InventoryAdapter(private val dataSet: ArrayList<DBItemEntry>) :
     RecyclerView.Adapter<InventoryAdapter.ViewHolder>()  {
