@@ -3,6 +3,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.DatabaseUtils
+import android.util.Log
 
 class DBOperations {
     /* adds an item and returns the primary key id of the item */
@@ -45,6 +46,30 @@ class DBOperations {
     }
 
     /**
+     * Removes location from database
+     * input: locationString
+     * output: true if operations succeeds, else false
+     */
+    public fun removeLocation(context: Context, locationString: String) : Boolean {
+        // note: this isn't going to work in an asynchrounous setting because it assumes string exists
+        // if you do move this to online, you're going to need to rethink ALL these operations
+
+        Log.d("removing location", locationString)
+        val dbHelper = DBHelper(context)
+        val db = dbHelper.writableDatabase
+
+        val cursor = db.rawQuery("SELECT * FROM ${DBContract.ItemEntry.TABLE_NAME} WHERE ${DBContract.ItemEntry.LOCATION_COL}=\"${locationString}\"", null)
+        if(cursor.moveToFirst()) {
+            return false
+        } else {
+            Log.d("removing", locationString)
+            db.execSQL("DELETE FROM ${DBContract.LocationEntry.TABLE_NAME} WHERE ${DBContract.LocationEntry.NAME_COL}=\"$locationString\"")
+
+            return true
+        }
+    }
+
+    /**
      * Check if item exists
      * true if exists, false if not
      * uses id, NOT rowid
@@ -75,11 +100,12 @@ class DBOperations {
                 cursor.getString(6),
                 cursor.getString(7)
             )
+            cursor.close()
             return itemEntry
         } else {
+            cursor.close()
             return null
         }
-        cursor.close()
     }
 
     /* gets a list of all elements, with location filter applied */

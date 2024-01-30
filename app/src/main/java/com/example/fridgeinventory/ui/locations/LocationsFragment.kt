@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -16,20 +17,22 @@ import com.example.fridgeinventory.DBOperations
 import com.example.fridgeinventory.R
 import com.example.fridgeinventory.databinding.FragmentLocationsBinding
 
-class NotificationsFragment : Fragment() {
+class LocationsFragment : Fragment() {
     private var _binding: FragmentLocationsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
-    class LocationAdapter(private val dataSet: ArrayList<String>) :
+    class LocationAdapter(private var dataSet: ArrayList<String>) :
         RecyclerView.Adapter<LocationAdapter.ViewHolder>()  {
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val textView: TextView
+            val deleteIcon : ImageView
             init {
                 // Define click listener for the ViewHolder's View
                 textView = view.findViewById(R.id.location_list_title)
+                deleteIcon = view.findViewById(R.id.delete_icon)
             }
         }
 
@@ -51,16 +54,20 @@ class NotificationsFragment : Fragment() {
             holder.textView.text = dataSet[position]
 
             holder.itemView.setOnClickListener{
-                // Go to home, set spinner's selected item as position, run search
-                //val intent = Intent(it.context, MainActivity::class.java)
-                //intent.putExtra("filter", position)
-                //startActivity(it.context, intent, null)
                 // navigate to home/list view using navController
                 val bundle = bundleOf("filterArg" to position)
                 holder.itemView.findNavController().navigate(R.id.navigation_home, bundle)
             }
-        }
 
+            holder.deleteIcon.setOnClickListener{
+                var dbOp = DBOperations()
+                if (dbOp.removeLocation(it.context,dataSet[position])) {
+                    dataSet = DBOperations().getLocations(it.context)
+                    Log.d("dataset", dataSet.toString())
+                    notifyDataSetChanged()
+                }
+            }
+        }
     }
 
     override fun onCreateView(
