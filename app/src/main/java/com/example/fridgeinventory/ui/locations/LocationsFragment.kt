@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -65,6 +66,9 @@ class LocationsFragment : Fragment() {
                     dataSet = DBOperations().getLocations(it.context)
                     Log.d("dataset", dataSet.toString())
                     notifyDataSetChanged()
+                } else {
+                    Log.d("here", dataSet.toString())
+                    Toast.makeText(it.context, "Remove items in location before deleting location", Toast.LENGTH_LONG).show()
                 }
             }
         }

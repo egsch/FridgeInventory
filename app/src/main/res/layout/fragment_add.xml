@@ -34,12 +34,20 @@
         android:hint="@string/enter_item_description"
         />
 
+    <TextView
+        android:id="@+id/itemLocationLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/itemLocation"
+        app:layout_constraintTop_toBottomOf="@id/itemDescription"
+        android:text="@string/locationLabel"
+        />
     <Spinner
         android:id="@+id/itemLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.AppCompat.Spinner.Underlined"
-        app:layout_constraintTop_toBottomOf="@id/itemDescription"/>
+        app:layout_constraintTop_toBottomOf="@id/itemLocationLabel"/>
 
 
     <EditText
