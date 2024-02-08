@@ -15,7 +15,6 @@ import android.widget.Spinner
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fridgeinventory.CameraActivity
@@ -81,9 +80,6 @@ class HomeFragment : Fragment() {
         val recyclerView: RecyclerView = binding.inventoryRv
         recyclerView.adapter = inventoryAdapter
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-        )
 
         // add link to camera
         val cameraButton = binding.cameraButton

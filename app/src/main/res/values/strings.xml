@@ -39,4 +39,6 @@
     <string name="expires_display">Expires %1$s</string>
     <string name="location_already_exists">Location already exists</string>
     <string name="locationLabel">Location</string>
+    <string name="your_inventory">Your Inventory</string>
+    <string name="your_locations">Your Locations</string>
 </resources>

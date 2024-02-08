@@ -4,88 +4,136 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
+    android:padding="10dp"
     tools:context=".ui.add.AddFragment">
 
     <TextView
         android:id="@+id/formHeader"
+        style="@style/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="50dp"
         android:text="@string/enter_an_item"
         />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemNameBox"
+        app:layout_constraintTop_toBottomOf="@id/formHeader"
+        android:layout_marginTop="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        >
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/itemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/formHeader"
         android:hint="@string/enter_item_name"
         />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemDescriptionBox"
+        app:layout_constraintTop_toBottomOf="@id/itemNameBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        >
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/itemName"
         android:hint="@string/enter_item_description"
         />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/itemLocationLabel"
+
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:labelFor="@id/itemLocation"
-        app:layout_constraintTop_toBottomOf="@id/itemDescription"
-        android:text="@string/locationLabel"
-        />
+        android:id="@+id/itemLocationBox"
+        app:layout_constraintTop_toBottomOf="@id/itemDescriptionBox"
+        android:background="@drawable/background_circle_input"
+        android:layout_marginTop="5dp"
+        >
+        <TextView
+            android:layout_marginTop="-5dp"
+            android:id="@+id/itemLocationLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/itemLocation"
+            android:text="@string/locationLabel"
+            />
     <Spinner
         android:id="@+id/itemLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        app:layout_constraintTop_toBottomOf="@id/itemLocationLabel"/>
+        app:layout_constraintTop_toBottomOf="@id/itemLocationLabel"
+        android:spinnerMode="dropdown"
+        />
+    </com.google.android.material.textfield.TextInputLayout>
 
-
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemExpirationBox"
+        app:layout_constraintTop_toBottomOf="@id/itemLocationBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        >
     <EditText
         android:id="@+id/itemExpiration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="date"
-        app:layout_constraintTop_toBottomOf="@id/itemLocation"
         android:hint="@string/enter_item_expiration_date"
         />
+    </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemLifetimeBox"
+        app:layout_constraintTop_toBottomOf="@id/itemExpirationBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        >
     <EditText
         android:id="@+id/itemLifetime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="date"
-        app:layout_constraintTop_toBottomOf="@id/itemExpiration"
         android:hint="@string/lifetime_past_expiration"
         />
+    </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/itemBarcodeBox"
+        app:layout_constraintTop_toBottomOf="@id/itemLifetimeBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        >
     <EditText
         android:id="@+id/itemBarcode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/itemLifetime"
         android:inputType="number"
         android:hint="@string/enter_item_barcode"
         />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/itemBarcode"
+        app:layout_constraintTop_toBottomOf="@id/itemBarcodeBox"
+        android:layout_marginTop="10dp"
         android:text="@string/create_entry"
         />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/cameraButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

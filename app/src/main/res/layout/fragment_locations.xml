@@ -4,30 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
+    android:padding="10dp"
     tools:context=".ui.locations.LocationsFragment">
 
-
     <TextView
-        android:id="@+id/text_notifications"
+        android:id="@+id/locationsHeader"
+        style="@style/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/your_locations"
         />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationInBox"
+        app:layout_constraintTop_toBottomOf="@id/locationsHeader"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_marginTop="5dp"
+        >
     <EditText
         android:id="@+id/input_location"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/enter_new_location"
-        app:layout_constraintTop_toBottomOf="@id/text_notifications" />
+        />
+    </com.google.android.material.textfield.TextInputLayout>
     <Button
         android:id="@+id/submit_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/input_location"
+        app:layout_constraintTop_toBottomOf="@id/locationInBox"
         android:text="@string/submit"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/location_rv"

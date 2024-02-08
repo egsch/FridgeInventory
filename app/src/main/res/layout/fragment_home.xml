@@ -4,24 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="0dp"
+    android:padding="10dp"
     tools:context=".ui.home.HomeFragment">
+
+    <TextView
+        android:id="@+id/homeHeader"
+        style="@style/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/your_inventory"
+        />
 
     <SearchView
         android:id="@+id/search_bar"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/homeHeader"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/camera_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         app:queryHint="Enter Search Term"
-        android:layout_margin="5dp"
         app:iconifiedByDefault="false"
 
         />
 
     <Button
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/homeHeader"
         app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/camera_button"
         android:layout_width="wrap_content"
