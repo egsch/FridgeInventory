@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="header">
-        <item name="android:textSize" >35dp</item>
+        <item name="android:textSize" >35sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="fontFamily">@font/lato</item>
     </style>
 
     <style name="itemText">
-        <item name="android:textSize" >15dp</item>
+        <item name="android:textSize" >15sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="fontFamily">@font/lato</item>
     </style>

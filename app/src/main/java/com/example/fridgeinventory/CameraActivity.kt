@@ -19,7 +19,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 
 class CameraActivity : AppCompatActivity() {
-    private var barcodeFound = false;
+    private var barcodeFound = false
     private lateinit var binding: ActivityCameraBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
